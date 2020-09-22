@@ -4,109 +4,111 @@
       <div class="row">
         <!-- Si es el creador de la aplicacion y su aplicacion fue rechazada !-->
         <template v-if="aplication.published == false && usercheck.role == 1 && aplication.verified == 1">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-6 offset-xl-3 offset-lg-2">
+        <div class="col-xs-12 col-sm-12 col-md-6 offset-md-3">
           <q-banner rounded  inline-actions class="text-black bg-red q-mb-md">
-            Tu aplicación fue rechazada.
+            {{$t('apprejected')}}
           </q-banner>
         </div>
         </template>
         <!-- Si es el creador y la aplicacion tiene una nueva version !-->
         <template v-else-if="aplication.published == false && usercheck.role == 1 && aplication.verified == 2">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-6 offset-xl-3 offset-lg-2">
+        <div class="col-xs-12 col-sm-12 col-md-6 offset-md-3">
           <q-banner rounded  inline-actions class="text-black bg-red q-mb-md">
-            Actualizaste tu aplicación por lo que sera revisada nuevamente por la comunidad.
+            {{$t('appnewversionowner')}}
           </q-banner>
         </div>
         </template>
         <!-- Si es el creador y la aplicacion todavia no es verificada !-->
         <template v-else-if="aplication.published == false && usercheck.role == 1">
-        <div  class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-6 offset-xl-3 offset-lg-2">
+        <div  class="col-xs-12 col-sm-12 col-md-6 offset-md-3">
           <q-banner rounded  inline-actions class="text-black bg-red q-mb-md">
-            Tu aplicación está siendo verificada.
+            {{$t('appproccessowner')}}
           </q-banner>
         </div>
         </template>
         <!-- Si es un revisador y la aplicacion fue rechazada !-->
         <template v-else-if="aplication.published == false && usercheck.role == 2 && aplication.verified == 1">
-        <div  class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-6 offset-xl-3 offset-lg-2"> 
+        <div  class="col-xs-12 col-sm-12 col-md-6 offset-md-3"> 
           <div class="q-gutter-sm q-pa-md">
             <q-banner rounded  inline-actions class="text-black bg-red">
-              Esta aplicación fue rechazada por la comunidad.
+              {{$t('apprejectedcommunity')}}
             </q-banner>
           </div> 
         </div>
         </template>
         <!-- Si es un revisador y aprobo una aplicacion recien creada o que tuvo una actualizacion !-->
         <template v-else-if="aplication.published == false && usercheck.role == 2 && usercheck.approved == true || usercheck.disapproved == true">
-        <div  class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-6 offset-xl-3 offset-lg-2"> 
+        <div  class="col-xs-12 col-sm-12 col-md-6 offset-md-3"> 
           <div class="q-gutter-sm q-pa-md">
             <q-banner v-if="aplication.verified == 0 || 2" rounded  inline-actions class="text-black bg-yellow">
-              Gracias por revisar la aplicación. Falta que más usuarios la revisen.
+              {{$t('appthank')}}
             </q-banner>
           </div> 
         </div>
         </template>
         <!-- Si es un revisador y ve una aplicacion recien creada !-->
         <template v-else-if="aplication.published == false && usercheck.role == 2"> 
-        <div  class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-6 offset-xl-3 offset-lg-2"> 
+        <div  class="col-xs-12 col-sm-12 col-md-6 offset-md-3"> 
           <div class="q-gutter-sm q-pa-md">
-            <q-banner v-show="showForm == false" v-if="aplication.verified == 0" rounded  inline-actions class="text-black bg-yellow">
-              Por favor revisa la aplicación, luego escribe observaciones y califica.
+            <q-banner v-show="showForm == false" v-if="aplication.verified == 0" rounded  inline-actions class="text-black bg-yellow">  
+              {{$t('appreview')}}
             </q-banner>
             <q-banner v-show="showForm == true" v-if="aplication.verified == 0 || 2" rounded  inline-actions class="text-black bg-yellow">
-              Gracias por revisar la aplicación. Falta que más usuarios la revisen.
+              {{$t('appthank')}}
             </q-banner>
             <!-- Si es un revisador y ve una aplicacion con una actualizacion !-->
-            <q-banner  v-show="showForm == false" v-if="aplication.verified == 2" rounded  inline-actions class="text-black bg-yellow">
-              Se ha detectado una nueva versión, puedes revisarla por favor.
+            <q-banner  v-show="showForm == false" v-if="aplication.verified == 2" rounded  inline-actions class="text-black bg-yellow"> 
+              {{$t('appnewversionreview')}}
             </q-banner>
             <q-input v-show="showForm == false"
               v-model="comment"
-              filled
+              outlined
               type="textarea"
-              dark
             />
             <q-btn v-show="showForm == false" color="primary" label="Aprobar" @click="checkApp()"/>
             <q-btn v-show="showForm == false" color="red" label="Rechazar"  @click="disapproveApp()"/>
           </div> 
         </div>
         </template>
-        <!-- Si es un usuario sin login y la app esta rechazada !-->
+        <!-- Si es un usuario sin login o con login sin ser revisador y la app esta rechazada !-->
         <template  v-else-if="aplication.published == false && aplication.verified == 1">
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-6 offset-xl-3 offset-lg-2">
+        <div class="col-xs-12 col-sm-12 col-md-6 offset-md-3">
           <q-banner rounded  inline-actions class="text-black bg-red q-mb-md">
-            Esta aplicación fue rechazada por la comunidad.
+            {{$t('apprejectedcommunity')}}
           </q-banner>
         </div>
         </template>
-        <!-- Si es un usuario sin login y la app tiene una nueva version sin verificar !-->
-        <template v-else-if="aplication.published == false && aplication.verified == 2 && usercheck.role == 3">
-        <div  class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-6 offset-xl-3 offset-lg-2">
+        <!-- Si es un usuario sin login o con login sin ser revisador y la app tiene una nueva version sin verificar !-->
+        <template v-else-if="aplication.published == false && aplication.verified == 2 && (usercheck.role == 3 || usercheck.role == 4)">
+        <div  class="col-xs-12 col-sm-12 col-md-6 offset-md-3">
           <q-banner rounded  inline-actions class="text-black bg-red q-mb-md">
-            Esta aplicación tiene una nueva versión, debe ser nuevamente revisada. Bajo tu responsabilidad puedes descargarla.
+            {{$t('newVersion')}}
           </q-banner>
         </div>
-        </template>
-        <!-- Si es un usuario sin login y ve una aplicacion sin revision !-->
-        <template v-else-if="aplication.published == false && usercheck.role == 3">
-        <div  class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-6 offset-xl-3 offset-lg-2">
+        </template>     
+        <!-- Si es un usuario sin login o con login sin ser revisador y ve una aplicacion sin revision !-->
+        <template v-else-if="aplication.published == false && (usercheck.role == 3 || usercheck.role == 4)">
+        <div  class="col-xs-12 col-sm-12 col-md-6 offset-md-3">
           <q-banner rounded  inline-actions class="text-black bg-red q-mb-md">
-            Esta aplicación no ha sido verificada, está en proceso de revisión. Bajo tu responsabilidad puedes descargarla.
+            {{$t('appnotverified')}}
           </q-banner>
         </div>
         </template>
         <!-- Si es cualquier usuario y la app es verificada !-->
         <template v-else-if="aplication.published == true">
-        <div  class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-6 offset-xl-3 offset-lg-2">
+        <div  class="col-xs-12 col-sm-12 col-md-6 offset-md-3">
           <q-banner rounded  inline-actions class="text-black bg-primary q-mb-md">
-            Aplicación verificada por la comunidad !
+            {{$t('appverified')}}
           </q-banner>
         </div>
         </template>
-        <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-4 offset-xl-2 offset-lg-2">
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-sm-12 col-md-4 offset-md-2 col-lg-4 col-xl-4 offset-xl-2 offset-lg-2">
           <q-img v-if="aplication.image_url !== ''"
               v-bind:src="aplication.image_url"
               style="width: 100%"
+              :ratio= 16/9
             >
               <div class="absolute-bottom text-subtitle1 text-center q-pa-xs">
                {{aplication.name}}
@@ -115,45 +117,106 @@
           <q-img v-else
               src="../assets/header-glove.jpg"
               style="width: 100%"
+              :ratio= 16/9
             >
               <div class="absolute-bottom text-subtitle1 text-center q-pa-xs">
                {{aplication.name}}
               </div>
           </q-img>
         </div>
-        <div class="q-pa-lg">
-          <div class="col-xs-12 col-sm-12 col-md-12 col-lg-4 col-xl-4 q-gutter-x-xs">
-            <h6 class="q-pa-xs q-mt-xs q-mb-md">{{aplication.name}}</h6> 
-            <h6 class="q-pa-xs q-mt-xs q-mb-md">Autor: {{autor}}</h6>
-            <h6 class="q-pa-xs q-mt-xs q-mb-md">{{aplication.os}}</h6>
-            <q-rating class="q-mb-md"
-              v-model="averageRating"
-              size="2em"
-              color="primary"
-              icon="star_border"
-              icon-selected="star"
-              icon-half="star_half"
-              readonly
+        <div class="q-pl-lg q-pt-lg col-xs-12 col-sm-12 col-md-4 col-lg-4 col-xl-4 q-gutter-x-xs">
+          <h6 class="q-pa-xs q-mt-xs q-mb-md">{{aplication.name}}</h6> 
+          <h6 class="q-pa-xs q-mt-xs q-mb-md">{{ $t('developer') }}: {{autor}}</h6>
+          <div v-if="aplication.rating_app == 'e'" class="q-mt-xs q-mb-md row">
+            <q-img 
+              src="../assets/e.svg"
+              style="max-width: 30px; height: 30px;"
+              contain
             />
-            <q-space/>
-            
-            <q-btn type="a" v-if="aplication.verified == 0 || aplication.verified == 2" v-bind:href="lastRelease" label="Descargar" color="primary" />
-           <!-- <q-badge align="middle">{{releases[0].tag_name}}</q-badge>-->
+            <div class="col q-pa-xs text-weight-bold">Todos</div>
           </div>
+          <div v-else-if="aplication.rating_app == 'e10'" class="q-mt-xs q-mb-md row">
+            <q-img 
+              src="../assets/E10plus.svg"
+              style="max-width: 30px; height: 30px;"
+              contain
+            />
+            <div class="col q-pa-xs text-weight-bold">Para mayores de 10 años</div>
+          </div>
+          <div v-else-if="aplication.rating_app == 'teen'" class="q-mt-xs q-mb-md row">
+            <q-img 
+              src="../assets/Teen.svg"
+              style="max-width: 30px; height: 30px;"
+              contain
+            />
+            <div class="col q-pa-xs text-weight-bold">Adolescentes</div>
+          </div>
+          <div v-else-if="aplication.rating_app == 'mature'" class="q-mt-xs q-mb-md row">
+            <q-img 
+              src="../assets/M.svg"
+              style="max-width: 30px; height: 30px;"
+              contain
+            />
+            <div class="col q-pa-xs text-weight-bold">Para mayores de 17 años</div>
+          </div>
+          <div v-else-if="aplication.rating_app == 'ao18'" class="q-mt-xs q-mb-md row">
+            <q-img 
+              src="../assets/AO.svg"
+              style="max-width: 30px; height: 30px;"
+              contain
+            />
+            <div class="col q-pa-xs text-weight-bold">Adultos únicamente</div>
+          </div>
+          <!--<div v-else-if="aplication.rating_app == 'rp'" class="q-mt-xs q-mb-md row">
+            <q-img 
+              src="../assets/RP.svg"
+              style="max-width: 30px; height: 30px;"
+              contain
+            />
+            <div class="col q-pa-xs text-weight-bold">Pendiente</div>
+          </div>!-->             
+          <div v-if="aplication.os == 'Windows'"  class="q-pa-xs q-mt-xs q-mb-md">
+            <q-icon name="fab fa-windows" style="color: #00c5d9; font-size: 2em;" />
+          </div>
+          <div v-if="aplication.os == 'Android'"  class="q-pa-xs q-mt-xs q-mb-md">
+            <q-icon name="android" style="color: #00d999; font-size: 2em;" />
+          </div>
+          <div v-if="aplication.os == 'Windows & Android' || aplication.os == 'Android & Windows'"  class="q-pa-xs q-mt-xs q-mb-md">
+            <q-icon name="fab fa-windows" style="color: #00c5d9; font-size: 2em;" />
+            <q-icon class="q-ma-xs" name="android" style="color: #00d999; font-size: 2em;" />
+          </div>
+          <q-rating class="q-mb-md"
+            v-model="averageRating"
+            size="2em"
+            color="primary"
+            icon="star_border"
+            icon-selected="star"
+            icon-half="star_half"
+            readonly
+          />
+          <q-space/>
+          
+          <q-btn type="a" v-if="aplication.verified == 0 || aplication.verified == 2" v-bind:href="lastRelease" :label="$t('download')" color="primary" />
+          <a v-if="$q.dark.isActive" class="q-pa-xs q-mt-xs q-mb-md" style="color: #ffffff; text-decoration:none" v-bind:href="'https://github.com/'+ aplication.git_url"> 
+              <q-icon name="fab fa-github" style="font-size: 2.0em;" />
+            </a>
+            <a v-if="!$q.dark.isActive" class="q-pa-xs q-mt-xs q-mb-md" style="color: #000000; text-decoration:none" v-bind:href="'https://github.com/'+ aplication.git_url"> 
+              <q-icon name="fab fa-github" style="font-size: 2.0em;" />
+            </a>
         </div>
       </div>
     </div>
     <div class="row">
-      <div class="q-pa-xs col-xs-12 text-white col-lg-8 col-xl-8 offset-lg-2 offset-xl-2">
-        <q-list dark padding bordered class="rounded-borders " style="max-width: 1500px">
+      <div class="q-pa-xs col-xs-12 col-lg-8 col-xl-8 offset-lg-2 offset-xl-2">
+        <q-list padding bordered class="rounded-borders " style="max-width: 1500px">
           <q-expansion-item
             icon="format_italic"
-            label="Descripción"
-            class="itemLabel"
+            :label="$t('description')"
+            class="text-h6"
           >
-            <q-card class="bg-twitch">
+            <q-card>
               <q-card-section>
-                <h6 class="text-white text-body1">
+                <h6 class="">
                   {{aplication.description}}
                 </h6>
                 <div v-if="aplication.video_url != ''" class="embed-container">
@@ -164,32 +227,36 @@
           </q-expansion-item>
           <q-expansion-item
             icon="description"
-            label="Documentación"
-            class="itemLabel"
+            :label="$t('documentation')"
+            class="text-h6"
           >
-            <q-card class="bg-twitch">
+            <q-card>
               <q-card-section>
-                <h6 class="text-white text-body1">{{aplication.documentation}}</h6>
+                <h6 class="q-mt-sm q-mb-sm"> Repositorio </h6>
+                <a class="text-body1" style="color: #ff9800; text-decoration:none" v-bind:href="'https://github.com/'+ aplication.git_url"> https://github.com/{{aplication.git_url}} </a>
+              </q-card-section>
+              <q-card-section>
+                <h6 class="text-body1">{{aplication.documentation}}</h6>
               </q-card-section>
             </q-card>
           </q-expansion-item>
           <q-expansion-item v-if="aplication.verified == 0 || aplication.verified == 2"
             icon="cloud_download"
-            label="Releases"
+            :label="$t('releases')"
             header-class="text-orange"
-            class="itemLabel"
+            class="text-h6"
           >
-            <q-card class="bg-twitch">
+            <q-card>
               <q-card-section>
                 <div class="q-pa-md" style="max-width: 350px">
                   <q-list dense bordered padding class="rounded-borders">
                     <q-item clickable v-ripple v-for="(release, $index) in releases" :key="$index">
                       <q-item-section avatar top>
-                        <a v-bind:href="release[16][1]" style="color: #ff9800 "> <q-avatar icon="folder" color="grey" text-color="white" /> </a>                   
+                        <a v-bind:href="release[16][1]" style="color: #ff9800; text-decoration:none"> <q-avatar icon="folder" color="grey" text-color="white" /> </a>                   
                       </q-item-section>
                       <q-item-section>
-                        <q-item-label caption>{{release[8][1]}} {{release[6][1]}}</q-item-label>
-                        <q-item-label caption>{{release[13][1]}}</q-item-label>
+                        <a v-bind:href="release[16][1]" style="text-decoration:none"> <q-item-label caption>{{release[8][1]}} {{release[6][1]}}</q-item-label> </a> 
+                        <a v-bind:href="release[16][1]" style="text-decoration:none"> <q-item-label caption>{{release[13][1]}}</q-item-label> </a> 
                       </q-item-section>
                     </q-item>
                   </q-list>
@@ -202,7 +269,7 @@
     </div>
     <div class="row">
       <div class="q-pa-xs q-gutter-y-xs col-xs-12 col-sm-12 col-xl-4 offset-xl-4 text-center text-orange">
-        <h6 class="q-mb-xs">Calificaciones</h6>
+        <h6 class="q-mb-xs">{{ $t('reviews')}}</h6>
       </div>
     </div>
     <div class="row">
@@ -212,22 +279,22 @@
     </div>
     <div class="row">
       <div v-if="!currentUser" class="q-pa-xs q-gutter-y-xs col-xs-12 col-sm-12 col-xl-4 offset-xl-4 text-center text-orange">
-        <h6 class="q-mb-xs">Inicia sesión para calificar esta aplicación</h6>
+        <h6 class="q-mb-xs">{{$t('SignipToReview')}}</h6>
       </div>
     </div>
     <q-inner-loading :showing="visible">
       <q-spinner-gears size="100px" color="primary" />
     </q-inner-loading>
     <div v-if="currentUser && usercheck.role != 1" v-show="showSimulatedReturnData" class="row">
-      <div  class="q-pa-xs q-gutter-y-xs col-xs-12 col-sm-12 col-xl-3 offset-xl-3">
-        <q-input dark outlined bottom-slots v-model="email" type="email" v-bind:label="currentUser.username" readonly >
+      <div  class="q-pa-md q-gutter-y-xs col-xs-12 col-sm-12 col-md-3 offset-md-3">
+        <q-input outlined bottom-slots v-model="email" type="email" v-bind:label="currentUser.username" readonly >
           <template v-slot:prepend>
             <q-icon name="perm_identity" />
           </template>
         </q-input>
       </div>
       
-      <div class="q-pa-xs q-gutter-y-xs col-xs-12 col-sm-12 col-xl-6 offset-xl-3">
+      <div class="q-pa-md q-gutter-y-xs col-xs-12 col-sm-12 col-md-6 offset-md-3">
         <h6 class="text-body2 q-mb-xs"> Selecciona al menos una estrella y escribe un comentario </h6>
         <q-rating
         v-model="rating"
@@ -240,8 +307,7 @@
         hint="Selecciona al menos 1"
       />
         
-        <q-input
-          dark 
+        <q-input 
           outlined
           v-model="commentRating"
           type="textarea"
@@ -252,7 +318,7 @@
       </div>
     </div>
     <div v-for="(rating, $index) in ratings" :key="$index" class="row">
-      <div class="q-pa-xs q-gutter-y-xs col-xs-12 col-sm-12 col-xl-6 offset-xl-3">
+      <div class="q-pa-md q-gutter-y-xs col-xs-12 col-sm-12 col-md-6 offset-md-3">
         <div class="q-pa-md q-gutter-sm">
           <q-banner v-if="rating.rating > 3" rounded class="bg-green text-black">
           <q-rating class="q-mb-xs q-mt-lg" 
@@ -300,7 +366,7 @@
           </q-banner>
         </div>
       </div>
-      <div class="q-pa-xs q-gutter-y-xs col-xs-12 col-sm-12 col-xl-6 offset-xl-3">
+      <div class="q-pa-xs q-gutter-y-xs col-xs-12 col-sm-12 col-md-6 offset-md-3">
         <q-separator color="primary" />
       </div>
     </div>
@@ -321,7 +387,7 @@
         </div>
     </template>
     <q-dialog v-model="dialog" transition-show="scale" transition-hide="scale">   
-      <q-card class="bg-twitch my-font" style="width: 300px; color: #00d999">
+      <q-card style="width: 300px; color: #00d999">
         <q-card-section>
           <div class="text-h6">Confirmar eliminación</div>
           <q-form
@@ -330,7 +396,6 @@
             class="q-gutter-md"
           >
           <q-input
-          dark  
           v-model="nameApp" 
           placeholder="Nombre de la aplicación" 
           hint="App1"
@@ -413,6 +478,10 @@ export default {
           if(this.currentUser) {
             if (this.aplication.check[index].user_id == this.currentUser.id) {
               this.usercheck = this.aplication.check[index]
+              break
+            }
+            else {
+              this.usercheck.role = 4
             }
           }
           else {
@@ -456,6 +525,7 @@ export default {
         this.visible = false
         this.showSimulatedReturnData = true
         this.aplication = request.data
+        console.log(this.aplication)
         for (let index = 0; index < this.aplication.check.length; index++) {  
           if (this.aplication.check[index].role == 1) {
             this.autor = this.aplication.check[index].user.username
@@ -463,6 +533,10 @@ export default {
           if(this.currentUser) {
             if (this.aplication.check[index].user_id == this.currentUser.id) {
               this.usercheck = this.aplication.check[index]
+              break
+            }
+            else {
+              this.usercheck.role = 4
             }
           }
           else {
@@ -644,7 +718,7 @@ export default {
       width: 100%;
       height: 100%;
   }
-  .q-list--dark, .q-item--dark {
+  /*.q-list--dark, .q-item--dark {
     color: #fff;
     border-color: rgb(0, 217, 153);
   }
@@ -654,12 +728,9 @@ export default {
     color: rgb(0, 217, 153);
     font-size: x-large;
   }
-  .my-font {
-    font-family: 'Sriracha-Regular';
-  }
-  .bg-twitch {
+  /*.bg-twitch {
     background: #0f0e11 !important;
-  }
+  }*/
   .q-list--bordered {
     border: 5
     px solid rgb(0, 217, 153);

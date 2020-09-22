@@ -6,13 +6,11 @@ module.exports = function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     boot: [
-      //'i18n',
+      'i18n',
       'axios'
     ],
 
-    css: [
-      'app.styl'
-    ],
+    
 
     extras: [
       // 'ionicons-v4',
@@ -22,8 +20,9 @@ module.exports = function (ctx) {
       // 'themify',
       // 'roboto-font-latin-ext', // this or either 'roboto-font', NEVER both!
 
-      //'roboto-font', // optional, you are not bound to it
-      'material-icons' // optional, you are not bound to it
+      'roboto-font', // optional, you are not bound to it
+      'material-icons', // optional, you are not bound to it
+      'fontawesome-v5',
     ],
 
     framework: {
@@ -81,7 +80,13 @@ module.exports = function (ctx) {
         'QPagination',
         'QOptionGroup',
         'QAvatar',
-        'QForm'
+        'QForm',
+        'QBtnToggle',
+        'QMenu',
+        'QTimeline',
+        'QTimelineEntry',
+        'QFooter'
+        
       ],
 
       directives: [
@@ -94,7 +99,8 @@ module.exports = function (ctx) {
         'Notify'
       ],
       config: {
-        notify: { /* Notify defaults */ }
+        notify: { /* Notify defaults */ },
+        dark: 'true'
       }
     },
 

@@ -1,5 +1,5 @@
 <template>
-  <div id="q-app" class="my-font">
+  <div id="q-app">
     <router-view />
   </div>
 </template>
@@ -12,7 +12,5 @@ export default {
 
 <style>
 
-.my-font {
-  font-family: 'Sriracha-Regular';
-}
+
 </style>

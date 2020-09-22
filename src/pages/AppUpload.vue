@@ -13,42 +13,66 @@
           :done="step > 1"
           style="min-height: 200px;"
         >
-        	<div class="q-pa-md q-gutter-y-md" style="max-width: 800px">
-  	        <q-input outlined bottom-slots v-model="name" type="email" label="Nombre de la aplicación *" hint="Rainbow Six Siege"
-  	        :rules="[ val => val.length >= 3 || 'Debe contener al menos 3 caracteres']" >
-              <template v-slot:prepend>
-                <q-icon name="title" />
-              </template>
-              <template v-slot:append>
-                <q-icon name="close" @click="name = ''" class="cursor-pointer" />
-              </template>
-            </q-input>
-            <q-input outlined bottom-slots v-model="image" type="email" label="Link de imagen (Opcional)" hint="https://www.example.com/image.jpg" >
-              <template v-slot:prepend>
-                <q-icon name="image" />
-              </template>
-              <template v-slot:append>
-                <q-icon name="close" @click="image = ''" class="cursor-pointer" />
-              </template>
-            </q-input>
-            <q-input outlined bottom-slots v-model="video" type="email" label="Link de video (Opcional)"  hint="https://www.youtube.com/embed/id" >
-              <template v-slot:prepend>
-                <q-icon name="video_library" />
-              </template>
-              <template v-slot:append>
-                <q-icon name="close" @click="video = ''" class="cursor-pointer" />
-              </template>
-            </q-input>
+          <div class="row">
+            <div class="col-xs-12 col-sm-4 offset-sm-4 text-center">
+              <div class="text-subtitle1 text-weight-bold text-center" >
+                {{$t('appname')}}
+              </div>
+              <q-input outlined bottom-slots v-model="name" type="email" :label="$t('appname')+' *'" hint="Rainbow Six Siege"
+              :rules="[ val => val.length >= 3 || $t('mustThree')]" >
+                <template v-slot:prepend>
+                  <q-icon name="title" />
+                </template>
+                <template v-slot:append>
+                  <q-icon name="close" @click="name = ''" class="cursor-pointer" />
+                </template>
+              </q-input>
+            </div>
           </div>
-    	    <q-stepper-navigation>
-      	    <template v-if="name.length >= 3">
-      	    	<q-btn @click="$refs.stepper.next()" color="primary" :label="'Continuar'" />
-      	    </template>
-      	    <template v-if="name.length < 3">
-      	    	<q-btn  color="red" :label="'Completa los campos requeridos'" ></q-btn>
-      	    </template>
-            <q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Back" class="q-ml-sm" />
-          </q-stepper-navigation>
+          <div class="row">
+            <div class="col-xs-12 col-sm-4 offset-sm-4 text-center">
+              <div class="text-subtitle1 text-weight-bold text-center" >
+                {{$t('appimage')}}
+              </div>
+              <q-input outlined bottom-slots v-model="image" type="email" label="Link de imagen (Opcional)" hint="https://www.example.com/image.jpg" >
+                <template v-slot:prepend>
+                  <q-icon name="image" />
+                </template>
+                <template v-slot:append>
+                  <q-icon name="close" @click="image = ''" class="cursor-pointer" />
+                </template>
+              </q-input>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-sm-4 offset-sm-4 text-center">
+              <div class="text-subtitle1 text-weight-bold text-center" >
+                Video Demo
+              </div>
+              <q-input outlined bottom-slots v-model="video" type="email" label="Link de video (Opcional)"  hint="https://www.youtube.com/embed/id" >
+                <template v-slot:prepend>
+                  <q-icon name="video_library" />
+                </template>
+                <template v-slot:append>
+                  <q-icon name="close" @click="video = ''" class="cursor-pointer" />
+                </template>
+              </q-input>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-sm-4 offset-sm-4 text-center">
+              <q-stepper-navigation>
+                <template v-if="name.length >= 3">
+                  <q-btn @click="$refs.stepper.next()" color="primary" :label="$t('continue')" />
+                </template>
+                <template v-if="name.length < 3">
+                  <q-btn  class="bg-red-5 text-white" :label="$t('completeallrequiredfields')" ></q-btn>
+                </template>
+                <q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" :label="$t('back')" class="q-ml-sm" />
+              </q-stepper-navigation>
+            </div>
+          </div>
+    	    
         </q-step>
 
         <q-step
@@ -58,61 +82,192 @@
           :done="step > 2"
           style="min-height: 200px;"
         >
-          <div class="q-pa-md" style="max-width: 250px">
-            <div class="text-subtitle1 text-weight-bold text-center" style="color: #000000" >
-              Categorías
+          <div class="row"> 
+            <div class="col-xs-12 col-sm-4 offset-sm-4"> 
+              <div class="text-subtitle1 text-weight-bold text-center" >
+                {{$t('categories')}}
+              </div>
+              <q-select
+                transition-show="scale"
+                transition-hide="scale"
+                label="Elige una o más"
+                filled
+                v-model="selectTags"
+                use-chips
+                multiple
+                input-debounce="0"
+                @new-value="createValue"
+                :options="filterOptions"
+                @filter="filterFn"
+               
+              />
             </div>
-            <q-select
-              transition-show="scale"
-              transition-hide="scale"
-              label="Elige una o más"
-              filled
-              v-model="selectTags"
-              use-chips
-              multiple
-              behavior="dialog"
-              input-debounce="0"
-              @new-value="createValue"
-              :options="filterOptions"
-              @filter="filterFn"
-              style="max-width: 800px"
-            />
           </div>
-  			  <div class="q-pa-md text-subtitle1 text-weight-bold" style="color: #000000; max-width: 250px" >
-            <div class="text-center" >
-                Plataforma
+          <div class="row">
+            <div class="col-xs-12 col-sm-6 offset-sm-3 text-center">
+              <div class="q-pa-md text-subtitle1 text-weight-bold">
+                {{$t('platform')}}
+              </div>
+                <q-option-group
+                  :options="options"
+                  label="Notifications"
+                  type="checkbox"
+                  v-model="group"
+                  inline
+                />
+    			  </div>
+          </div> 
+          <div class="row">
+            <div class="col-xs-12 col-sm-6 offset-sm-3">
+              <div class="q-pa-md text-subtitle1 text-weight-bold text-center">
+                {{$t('rating')}}
+              </div>
+              <q-list>
+                <!--
+                  Rendering a <label> tag (notice tag="label")
+                  so QRadios will respond to clicks on QItems to
+                  change Toggle state.
+                -->
+                <q-item  tag="label" v-ripple>
+                  <q-item-section avatar>
+                    <q-radio v-model="rating" val="e" color="primary" />
+                  </q-item-section>
+                  <q-item-section avatar>
+                    <q-img 
+                      src="../assets/e.svg"
+                      style="max-width: 30px; height: 30px;"
+                      contain
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>Todos</q-item-label> 
+                    <q-icon name="info" style="font-size: 2em;" class="q-pa-xs lt-md"  @click="alert = true, rating = 'e'"/>
+                    <q-item-label class="gt-sm" caption>Por lo general, el contenido es adecuado para todas las edades. Puede contener una cantidad mínima de violencia de caricatura, 
+                      de fantasía o ligera, o uso poco frecuente de lenguaje moderado. </q-item-label>
+                  </q-item-section>
+                </q-item>
+                
+                <q-item tag="label" v-ripple>
+                  <q-item-section avatar>
+                    <q-radio v-model="rating" val="e10" color="primary" />
+                  </q-item-section>
+                  <q-item-section avatar>
+                    <q-img 
+                      src="../assets/E10plus.svg"
+                      style="max-width: 30px; height: 30px;"
+                      contain
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label >Todos +10</q-item-label>
+                    <q-icon name="info" style="font-size: 2em;" class="q-pa-xs lt-md"  @click="alert = true, rating = 'e10'"/>
+                    <q-item-label class="gt-sm" caption>El contenido es generalmente adecuado para mayores de 10 años. 
+                      Puede contener más violencia de caricatura, de fantasía o ligera, lenguaje moderado o temas mínimamente provocativos. </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item tag="label" v-ripple>
+                  <q-item-section avatar>
+                    <q-radio v-model="rating" val="teen" color="primary" />
+                  </q-item-section>
+                  <q-item-section avatar>
+                    <q-img 
+                      src="../assets/Teen.svg"
+                      style="max-width: 30px; height: 30px;"
+                      contain
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label >Adolescentes</q-item-label>
+                    <q-icon name="info" style="font-size: 2em;" class="q-pa-xs lt-md"  @click="alert = true, rating = 'teen'"/>
+                    <q-item-label class="gt-sm" caption>Por lo general, el contenido es adecuado para mayores de 13 años. Puede contener violencia, temas insinuantes, 
+                      humor grosero, mínima cantidad de sangre, apuestas simuladas o uso poco frecuente de lenguaje fuerte. </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <q-item tag="label" v-ripple>
+                  <q-item-section avatar>
+                    <q-radio v-model="rating" val="mature" color="primary" />
+                  </q-item-section>
+                  <q-item-section avatar>
+                    <q-img 
+                      src="../assets/M.svg"
+                      style="max-width: 30px; height: 30px;"
+                      contain
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label >Maduro</q-item-label>
+                    <q-icon name="info" style="font-size: 2em;" class="q-pa-xs lt-md"  @click="alert = true, rating = 'mature'"/>
+                    <q-item-label class="gt-sm" caption>El contenido por lo general es apto para mayores de 17 años. Puede contener 
+                      violencia intensa, sangre y derramamiento de sangre, contenido sexual o lenguaje fuerte. </q-item-label>
+                  </q-item-section> 
+                </q-item>
+                <q-item tag="label" v-ripple>
+                  <q-item-section avatar>
+                    <q-radio v-model="rating" val="ao18" color="primary" />
+                  </q-item-section>
+                  <q-item-section avatar>
+                    <q-img 
+                      src="../assets/AO.svg"
+                      style="max-width: 30px; height: 30px;"
+                      contain
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label >Adultos únicamente</q-item-label>
+                    <q-icon name="info" style="font-size: 2em;" class="q-pa-xs lt-md"  @click="alert = true, rating = 'ao18'"/>
+                    <q-item-label class="gt-sm" caption>Contenido adecuado solo para adultos mayores de 18 años. Puede incluir escenas 
+                      prolongadas de violencia intensa, contenido sexual gráfico o apuestas con moneda real. </q-item-label>
+                  </q-item-section>
+                </q-item>
+                <!--<q-item tag="label" v-ripple>
+                  <q-item-section avatar>
+                    <q-radio v-model="rating" val="rp" color="primary" />
+                  </q-item-section>
+                  <q-item-section avatar>
+                    <q-img 
+                      src="../assets/RP.svg"
+                      style="max-width: 30px; height: 30px;"
+                      contain
+                    />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label class="gt-sm">Pendiente</q-item-label>
+                    <q-icon name="info" style="font-size: 2em;" class="q-pa-xs lt-md"  @click="alert = true, rating = 'rp'"/>
+                    <q-item-label class="gt-sm" caption>Si no sabes la calificación de tu aplicación</q-item-label>
+                  </q-item-section>
+                </q-item>!-->
+              </q-list>
             </div>
-    			    <q-option-group
-    			      :options="options"
-    			      label="Notifications"
-    			      type="radio"
-    			      v-model="group"
-    			    />
-    			</div>
-    		  <div class="q-pa-md " style="max-width: 1600px">
-            <div class="text-subtitle1 text-weight-bold text-center" style="color: #000000" >
-                Descripción
-            </div>
-    		    <q-input
-    		      v-model="textareaDescription"
-    		      filled
-    		      type="textarea"
-              hint="Escribe una descripción para tu app"
-              :rules="[ val => val.length >= 1 || 'Debes escribir algo']" 
-    		    />
-    		  </div>
-          <q-stepper-navigation>
-           	<template  v-if="selectTags.length > 0 && group != null && textareaDescription !== ''" > 
-           		<q-btn @click="$refs.stepper.next()" color="primary" :label="'Continuar'" >
-  	    	    </q-btn>
-            </template>
-    		    <template  v-if="selectTags.length <= 0 || group == null || textareaDescription == ''" >
-    		    	<q-btn  color="red" :label="'Completa todos los campos'" ></q-btn>
-    		    </template>
-            <q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Atras" class="q-ml-sm" />
-          </q-stepper-navigation>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-sm-6 offset-sm-3"> 
+              <div class="text-subtitle1 text-weight-bold text-center" >
+                {{$t('description')}}
+              </div>
+              <q-input
+                v-model="textareaDescription"
+                outlined
+                type="textarea"
+                hint="Escribe una descripción para tu app"
+                :rules="[ val => val.length >= 1 || 'Debes escribir algo']" 
+              />
+              </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-sm-6 offset-sm-3 text-center">
+              <q-stepper-navigation>
+                <template  v-if="selectTags.length > 0 && group.length != 0 && textareaDescription !== '' && rating !== ''" > 
+                  <q-btn @click="$refs.stepper.next()" color="primary" :label="$t('continue')" >
+                  </q-btn>
+                </template>
+                <template  v-if="selectTags.length <= 0 || group.length == 0 || textareaDescription == '' || rating == ''" >
+                  <q-btn  class="bg-red-5 text-white" :label="$t('completeallrequiredfields')" ></q-btn>
+                </template>
+                <q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" :label="$t('back')" class="q-ml-sm" />
+              </q-stepper-navigation>
+            </div> 
+          </div>   
         </q-step>
-
         <q-step
           :name="3"
           title="Paso 3"
@@ -120,120 +275,133 @@
           :done="step > 3"
           style="min-height: 200px;"
         >
-          <div class="q-pa-md" style="max-width: 800px">
-  	        <q-input outlined bottom-slots v-model="nameGit" type="url" label="Nombre de usuario en GitHub *" hint="JorgeVasquez"
-  	        >
-              <template v-slot:prepend>
-                <q-icon name="link" />
-              </template>
-              <template v-slot:append>
-                <q-icon name="close" @click="nombre = ''" class="cursor-pointer" />
-              </template>
-            </q-input>
+          <div class="row">
+            <div class="col-xs-12 col-sm-4 offset-sm-4 text-center">
+              <div class="text-subtitle1 text-weight-bold text-center" >
+                {{$t('usernameGit')}}
+              </div>
+              <q-input outlined bottom-slots v-model="nameGit" type="url" :label="$t('usernameGit')+'*'" hint="JorgeVasquez">
+                <template v-slot:prepend>
+                  <q-icon name="link" />
+                </template>
+                <template v-slot:append>
+                  <q-icon name="close" @click="nombre = ''" class="cursor-pointer" />
+                </template>
+              </q-input>
             </div>
-            <div class="q-pa-md" style="max-width: 800px">
-            <q-input outlined bottom-slots v-model="repoGit" type="url" label="Nombre del repositorio *" hint="APICSharp"
-  	        >
-              <template v-slot:prepend>
-                <q-icon name="link" />
-              </template>
-              <template v-slot:append>
-                <q-icon name="close" @click="nombre = ''" class="cursor-pointer" />
-              </template>
-            </q-input>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-sm-4 offset-sm-4 text-center">
+              <div class="text-subtitle1 text-weight-bold text-center" >
+                {{$t('Repositoryname')}}
+              </div>
+              <q-input outlined bottom-slots v-model="repoGit" type="url" :label="$t('Repositoryname')+'*'" hint="APICSharp">
+                <template v-slot:prepend>
+                  <q-icon name="link" />
+                </template>
+                <template v-slot:append>
+                  <q-icon name="close" @click="nombre = ''" class="cursor-pointer" />
+                </template>
+              </q-input>
             </div>
-            <div class="q-pa-md" style="max-width: 1600px; color: #000000" >
-                <div class="text-center text-weight-bold" >
-                Documentación
-            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-sm-4 offset-sm-4 text-center">
+              <div class="text-subtitle1 text-weight-bold text-center" >
+                {{$t('documentation')}}
+              </div>
               <q-input
                 v-model="textareaDocumentation"
-                filled
+                outlined
                 type="textarea"
                 hint="Escribe la documentación o deja un link de descarga"
                 :rules="[ val => val.length >= 1 || 'Debes escribir algo']" 
               />
             </div>
-  	      
-           <q-stepper-navigation>
-            <template  v-if="nameGit !== '' && textareaDocumentation !== '' && repoGit !== ''" >
-              <q-btn @click="$refs.stepper.next()" color="primary" :label="'Continuar'" ></q-btn>
-            </template>
-            <template  v-if="nameGit == '' || textareaDocumentation == '' || repoGit == ''" >
-                <q-btn  color="red" :label="'Completa los campos requeridos'" ></q-btn>
-            </template>
-            
-            <q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Atras" class="q-ml-sm" />
-          </q-stepper-navigation>
+          </div>
+          <div class="row">
+            <div class="col-xs-12 col-sm-4 offset-sm-4 text-center">
+              <q-stepper-navigation>
+                <template  v-if="nameGit !== '' && textareaDocumentation !== '' && repoGit !== ''" >
+                  <q-btn @click="$refs.stepper.next()" color="primary" :label="$t('continue')" ></q-btn>
+                </template>
+                <template  v-if="nameGit == '' || textareaDocumentation == '' || repoGit == ''" >
+                    <q-btn  class="bg-red-5 text-white"  :label="$t('completeallrequiredfields')" ></q-btn>
+                </template>
+                <q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" :label="$t('back')" class="q-ml-sm" />
+              </q-stepper-navigation>
+            </div>
+          </div>		      
         </q-step>
-
         <q-step
           :name="4"
           title="Paso 4"
           icon="add_comment"
           style="min-height: 200px;"
         >
-          <div class="text-subtitle1 text-weight-bold text-center" style="color: #000000" >
-            Nombre de la aplicación
+          <div class="text-subtitle1 text-weight-bold text-center" >
+            {{$t('appname')}}
             <q-space/>
-            <div class="text-subtitle1 text-weight-light text-center" style="color: #000000" >
+            <div class="text-subtitle1 text-weight-light text-center" >
               {{name}}
             </div>
           </div>
-          <div class="text-subtitle1 text-weight-bold text-center" style="color: #000000" >
-            Imagen de portada
+          <div class="text-subtitle1 text-weight-bold text-center"  >
+            {{$t('appimage')}}
             <q-space/>
-            <div v-if="image != ''" class="text-subtitle1 text-weight-light text-center" style="color: #000000" >
+            <div v-if="image != ''" class="text-subtitle1 text-weight-light text-center"  >
               <q-img
                 v-bind:src="image"
                 style="width: 300px"
               >
               </q-img>
             </div>
-            <div v-if="image == ''" class="text-subtitle1 text-weight-light text-center" style="color: #000000" >
+            <div v-if="image == ''" class="text-subtitle1 text-weight-light text-center"  >
               No adjuntaste imagen de portada
             </div>
           </div>
-          <div class="text-subtitle1 text-weight-bold text-center" style="color: #000000" >
-            Categorias
+          <div class="text-subtitle1 text-weight-bold text-center" >
+            {{$t('categories')}}
             <q-space/>
-            <div class="text-subtitle1 text-weight-light text-center" style="color: #000000" >
+            <div class="text-subtitle1 text-weight-light text-center" >
               <div v-for="(tag, $index) in selectTags" :key="$index">
                 {{tag}}
               </div>
             </div>
           </div>
-          <div class="text-subtitle1 text-weight-bold text-center" style="color: #000000" >
-            Repositorio
+          <div class="text-subtitle1 text-weight-bold text-center" >
+            {{$t('Repositoryname')}}
             <q-space/>
-            <div class="text-subtitle1 text-weight-light text-center" style="color: #000000" >
+            <div class="text-subtitle1 text-weight-light text-center"  >
               {{nameGit}} {{repoGit}}
             </div>
           </div>
-          <div class="text-subtitle1 text-weight-bold text-center" style="color: #000000" >
-            Plataforma
+          <div class="text-subtitle1 text-weight-bold text-center"  >
+            {{$t('platform')}}
             <q-space/>
-            <div class="text-subtitle1 text-weight-light text-center" style="color: #000000" >
-              {{group}}
+            <div class="text-subtitle1 text-weight-light text-center"  >
+              <div v-for="(group, $index) in group" :key="$index">
+                {{group}}
+              </div>
             </div>
           </div>
            <q-stepper-navigation>
-            <q-btn @click="upload()"  color="primary" label="Subir App"/>
-            <q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" label="Atras" class="q-ml-sm" />
+            <q-btn @click="upload()"  color="primary" :label="$t('upload')"/>
+            <q-btn v-if="step > 1" flat color="primary" @click="$refs.stepper.previous()" :label="$t('back')" class="q-ml-sm" />
           </q-stepper-navigation>
         </q-step>
         <template v-slot:message>
-          <q-banner v-if="step === 1" class="bg-purple-8 text-white q-px-lg">
-            Escribe el nombre de tu aplicación, el video y la imagen son opcionales.
+          <q-banner v-if="step === 1" class="bg-red-5  text-white q-px-lg">
+            {{$t('step1text')}}
           </q-banner>
-          <q-banner v-else-if="step === 2" class="bg-orange-8 text-white q-px-lg">
-            Elige todas las categorías a las que pertenece tu aplicación, selecciona la plataforma compatible y escribe una descripción para tu app !
+          <q-banner v-else-if="step === 2" class="bg-red-5 text-white q-px-lg">
+            {{$t('step2text')}}
           </q-banner>
-          <q-banner v-else-if="step === 3" class="bg-green-8 text-white q-px-lg">
-            Debes escribir tu usuario de GitHub, el nombre del repositorio y la documentación puede ser un link directo para descarga de un documento.
+          <q-banner v-else-if="step === 3" class="bg-red-5 text-white q-px-lg">
+            {{$t('step3text')}}
           </q-banner>
-          <q-banner v-else-if="step === 4" class="bg-blue-8 text-white q-px-lg">
-            Ahora se muestra un resumen de tu aplicación, si esta todo correcto finaliza el proceso (no puedes editarla posteriormente). Tu aplicación sera publicada y entrara en un proceso de revisión.
+          <q-banner v-else-if="step === 4" class="bg-red-5 text-white q-px-lg">
+            {{$t('step4text')}}
           </q-banner>
         </template>
       </q-stepper>
@@ -241,6 +409,80 @@
     <template v-if="!checkCurrentLogin()">
       <h4 class="text-center">Inicia sesión para subir tu aplicación!</h4>
     </template>
+    <q-dialog v-model="alert">
+      <q-card v-if="rating== 'e'">
+        <q-card-section>
+          <div class="text-h6"> Todos </div>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+           Por lo general, el contenido es adecuado para todas las edades. Puede contener una cantidad mínima de violencia de caricatura, 
+                      de fantasía o ligera, o uso poco frecuente de lenguaje moderado.
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+      <q-card v-else-if="rating== 'e10'">
+        <q-card-section>
+          <div class="text-h6"> Todos +10</div>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+           El contenido es generalmente adecuado para mayores de 10 años. 
+                      Puede contener más violencia de caricatura, de fantasía o ligera, lenguaje moderado o temas mínimamente provocativos.
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+      <q-card v-else-if="rating== 'teen'">
+        <q-card-section>
+          <div class="text-h6"> Adolescentes </div>
+        </q-card-section>
+        <q-card-section  class="q-pt-none">
+           Por lo general, el contenido es adecuado para mayores de 13 años. Puede contener violencia, temas insinuantes, 
+                      humor grosero, mínima cantidad de sangre, apuestas simuladas o uso poco frecuente de lenguaje fuerte.
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+      <q-card v-else-if="rating== 'mature'">
+        <q-card-section>
+          <div class="text-h6"> Maduro </div>
+        </q-card-section>
+        <q-card-section  class="q-pt-none">
+           El contenido por lo general es apto para mayores de 17 años. Puede contener 
+                      violencia intensa, sangre y derramamiento de sangre, contenido sexual o lenguaje fuerte.
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+      <q-card v-else-if="rating== 'ao18'">
+         <q-card-section>
+          <div class="text-h6"> Adultos únicamente </div>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+           Contenido adecuado solo para adultos mayores de 18 años. Puede incluir escenas 
+                      prolongadas de violencia intensa, contenido sexual gráfico o apuestas con moneda real.
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card>
+      <!--<q-card v-else-if="rating== 'rp'">
+        <q-card-section>
+          <div class="text-h6"> Pendiente </div>
+        </q-card-section>
+        <q-card-section class="q-pt-none">
+           Si no sabes la calificación de tu aplicación.
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="OK" color="primary" v-close-popup />
+        </q-card-actions>
+      </q-card> !-->
+        
+    </q-dialog>
   </div>
 </template>
 
@@ -261,9 +503,11 @@ export default {
       repoGit: '',
       selectTags: [],
       tagsAux: null,
+      alert: false,
       tags: [],
+      rating: '',
       filterOptions: this.tags,
-      group: null,
+      group: [],
       idApp: 0,
       options: [
         { label: 'Windows', value: 'Windows', color: 'blue' },
@@ -299,7 +543,13 @@ export default {
     upload () {
       if (this.currentUser && localStorage.token != null) {
         var github = this.nameGit.concat("/",this.repoGit)
-        var data = {"name": this.name, "description": this.textareaDescription, "git_url": github, "video_url":this.video, "documentation":this.textareaDocumentation, "image_url": this.image, "os": this.group,"user_id": this.currentUser.id}
+        if (this.group.length > 1) {
+          var os = this.group[0].concat(" & ",this.group[1])
+        }
+        else{
+          var os = this.group[0]
+        }
+        var data = {"name": this.name, "description": this.textareaDescription, "git_url": github, "video_url":this.video, "documentation":this.textareaDocumentation, "image_url": this.image, "os": os,"user_id": this.currentUser.id, "rating_app": this.rating}
         var json = JSON.stringify(data);
         this.$axios.post("/api/v1/apps",json)
         .then(response => {
